@@ -6,7 +6,7 @@ setup(
         version='0.1.0', 
         packages=['dotman'], 
         entry_points= {
-            'console-scripts': [ 
+            'console_scripts': [ 
                 'dotman = dotman.__main__:main'
             ]
     })

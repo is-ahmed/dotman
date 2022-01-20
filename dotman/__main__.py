@@ -8,34 +8,45 @@ def main():
     username = os.getlogin()
     if os.path.exists("/home/" + username + "/.dotman") == False:
         print("~/.dotman folder does not exist setting up now...")
-        first_setup(username)
-    else:
-        print("does exist")
+        firsttime_setup(username)
 
 
-    parser = argparse.ArgumentParser(description="Sync your dotfiles with one monolithic CLI tool")
+    argument_parser = create_parser()
+    
+    args = argument_parser.parse_args()
+    
+    process_args(args)
+
+
+def create_parser():
+    parser = argparse.ArgumentParser(description="Sync your dotfiles with one seamless CLI tool")
     group = parser.add_mutually_exclusive_group()
-    parser.add_argument("x", help="the base", type=int)
-    parser.add_argument("y", help="the exponent", type=int)
+    parser.add_argument("sync", help="sync your dotfiles with your current repo", nargs='?')
+    parser.add_argument("diff", help="Find the diff between local and remote versions of all dotfiles")
+    parser.add_argument("-s", "--set-repo=", help="Set the git repo of your dotfiles")
     group.add_argument("-v", "--verbose", help="increase the verbosity of your output", action="count",
                         default=0 )
     group.add_argument("-q", "--quiet", action="store_true")
-    args = parser.parse_args()
-    answer = args.x ** args.y
-   
-    if args.quiet:
-        print(answer)
-    elif args.verbose:
-        print(f"{args.x} to the power of {args.y} equals {answer}")
-    else:
-        print(f"{args.x}^{args.y} == {answer} ")
 
+    return parser
 
-def first_setup(username: str):
+def process_args(args: argparse.Namespace):
     ...
+   
+
+
+def firsttime_setup(username: str):
 
     os.mkdir("/home/" + username + "/.dotman")
+    touch("/home/" + username + "/.dotman/config.conf")
+
     
+
+
+
+def touch(path: str):
+    with open(path, 'a'):
+        os.utime(path, None)
 
 
 

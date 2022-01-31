@@ -21,7 +21,7 @@ if they want to move the config files
 ## Architecture
 
 - dotman will have a main that will execute each time it's called where user can pass in arguments and specify any use flags
-- dotman will then parse through all the all the different arguments and commands and call the different subsystems such as diff, sync
+- dotman will then parse through all the all the different arguments and commands and call the different components such as diff, sync
 and set-repo
 
 
@@ -32,19 +32,34 @@ and set-repo
 - Have a config.json file that we'll store in some directory
 - Will hold the currently set repo and absolute paths for
 the different config files
+- Absolute path: ~/.config/dotman/config.json
 
 
-## Set repo subsystem
-
+## Set repo
 - Flag for the cli that takes in a git repo url as an argument
 - If the user changes the repo for their config files, then we prompt them 
 for the absolute file paths
 
 
-## Sync subsystem
+## Sync
 
 - Sync config files on the local machine with git repo
 - Automatically copy files to appropriate directories based on
 file paths in config.json
 - If the diff doesn't show any difference in any config files then 
 we don't pull from the git repo
+
+## Diff 
+
+- Show the difference between the config files on the local machine
+and git repo in a paginated way
+
+## Revert
+
+- Restore the current dotfiles directory to the previous commit and then
+reset the copies of the dotfiles in the systems directories
+
+## Add
+
+- Similar to git add
+- Debating on how this would work or if we even need it

@@ -2,9 +2,11 @@ import sys
 import argparse
 import os
 import re
-from typing import Optional
 import json
+import git
+from typing import Optional
 from utils import utils
+from set_repo import set_repo
 
 def main():
 
@@ -37,10 +39,14 @@ def process_args(args: argparse.Namespace):
     setrepo = args.setrepo
     sync = args.sync
     diff = args.diff
+    if setrepo is not None: 
+        is_setrepo_valid = validate_repo(setrepo)
+        if is_setrepo_valid:
+            set_repo.set_repo(setrepo)
+        else:
+            print("Repo url is not valid. Check for any typos or spelling mistakes")
 
-    if setrepo and validate_url(setrepo):
-        set_repo(setrepo)
-
+    
 
 
 
@@ -57,39 +63,34 @@ def firsttime_setup(username: str):
         "url": None,
     }
 
-    with open(config_dir + "/config.json", 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    with open(config_dir + "/config.json", 'w') as f:
+        json.dump(data, f)
 
 
 
-def set_repo(url: str):
+
+
+def validate_repo(repo_url: str) -> Optional[bool]:
+    """Return whether the given url points to an existing git
+    repository 
+
     """
-    Precondition:
-        - The config file is created with the proper format
+    
+    match = re.match(r"((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)?(/)?", repo_url)
 
-    """
-
-    username = os.getlogin()
-    config_path = "/home/" + username + "/.config/dotman/config.json"
-
-    file = open(config_path, 'rw')
-
-    json_data = json.load(file)
-
-    json_data['url'] = url
-
-    json.dump(json_data, file)
-
-    file.close()
-
-    utils.clone(url)
+    # Now I will check if the url points to a public git repo
 
 
-def validate_url(repo_url: str) -> Optional[bool]:
-
-    match = re.match(r"((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?", repo_url)
 
     return match is not None
+
+def lsremote(url: str):
+    g = git.cmd.Git()
+
+    try g.ls_remote(url):
+        return True
+
+    
 
 
 def touch(path: str):

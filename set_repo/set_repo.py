@@ -3,10 +3,14 @@ from git.repo import Repo
 import git
 import os
 import json
+import getpass
 
 def set_repo(url: str):
 
-    """Precondition:
+    """
+    Set the repo for the dotfiles in the json config file
+
+    Precondition:
         - The config file is created with the proper format
         - The url has been validated as repo for a git repository
 
@@ -18,6 +22,7 @@ def set_repo(url: str):
         data = json.load(config_file)
 
     data['url'] = url
+    data['system_path'] = config_path
 
     with open(config_path, "w") as config_file:
         json.dump(data, config_file)
@@ -30,16 +35,17 @@ def clone(url: str):
 
     Precondition:
         - url points to a valid and existing git repo
+        - ~/.config/dotman exists
 
     """
     try:
-        Repo.clone_from(url, "~/")
+        breakpoint()
+        Repo.clone_from(url, '/home/' + getpass.getuser() + '/.config/dotman/dotfiles')
         set_paths()
     except git.exc.GitError:
         print('ERROR! Repo does not exist!')
 
 def set_paths():
-
     ...
      
 
